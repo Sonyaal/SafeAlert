@@ -67,6 +67,11 @@ def disable_alarms():
     grovepi.analogWrite(buzzer_port, 0)  # Turn off buzzer
     grovepi.digitalWrite(led_port, 0)  # Turn off red led
 
+#Default message callback. Please use custom callbacks.
+def on_message(client, userdata, msg):
+    print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
+
+
 if __name__ == '__main__':
     alert_flag = 0
     user_response = 0
