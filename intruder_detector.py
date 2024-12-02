@@ -30,8 +30,8 @@ def on_intruder_message(client, userdata, msg):
     if message == "TURN_OFF_ALARMS": # sent when user wants to disable alarms
         print("Turning alarms off")
         disable_alarms()
-    elif message == "TURN_ON_ALARMS": # sent when user wants to keep alarms on ???
-        print("Turning alarms on")
+    elif message == "KEEP_ALARMS_ON": # sent when user wants to keep alarms on ???
+        print("Keeping alarms on")
         alert()
     else:
         # Error handling if we don't get an expected message
@@ -107,8 +107,8 @@ if __name__ == '__main__':
                     # Make buzzer noise increase while the user has not responded
                     while user_response == 0:
                         print("in while loop")
-                        buzzer_val = buzzer_val + 10
-                        grovepi.analogWrite(buzzer_port, buzzer_val)
+                        # buzzer_val = buzzer_val + 11
+                        # grovepi.analogWrite(buzzer_port, buzzer_val)
                         time.sleep(1)
                     if (user_response):
                         # setting flag back to 0
