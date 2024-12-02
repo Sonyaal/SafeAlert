@@ -21,8 +21,6 @@ grovepi.pinMode(light_sensor_port, "INPUT")
 
 light_threshold = 250  
 distance_threshold = 100
-alert_flag = 0
-user_response = 0 
 
 # RPI will only be recieving messages from the user on this topic
 def on_intruder_message(client, userdata, msg):
@@ -57,6 +55,10 @@ def disable_alarms():
     grovepi.digitalWrite(led_port, 0)  # Turn off red led
 
 if __name__ == '__main__':
+
+    alert_flag = 0
+    user_response = 0
+
     client = mqtt.Client()
     client.on_message = on_message
     client.on_connect = on_connect
