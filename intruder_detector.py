@@ -23,7 +23,7 @@ grovepi.pinMode(ultrasonic_ranger_port, "INPUT")
 # Initialize the light sensor as input
 grovepi.pinMode(light_sensor_port, "INPUT")
 
-light_threshold = 50
+light_threshold =   100
 distance_threshold = 100
 
 # Load the public key
