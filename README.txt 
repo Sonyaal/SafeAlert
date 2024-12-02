@@ -1,7 +1,14 @@
 Team members: Ethan Palosh and Sonya Alexis
 
 Link to view demo online (if using the video demo option for -3 late points)
+    - N/A
 
 Instructions on how to compile/execute program(s) 
+    - Pull code from [GitHub](https://github.com/Sonyaal/SafeAlert.git) into RPi
+    - Run python intruder_detector.py on RPi
+    - Run python alarm_control.py on laptop
 
 List of any external libraries that were used
+    - mqtt used for communication between RPi and Laptop
+    - tkinter used for webpage
+    - pyca/cryptography used for encryption
