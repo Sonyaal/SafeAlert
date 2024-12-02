@@ -21,13 +21,26 @@ class IoTDashboard:
         logo_label = tk.Label(root, text="SafeAlert", font=("Arial", 150, "bold"), fg="white", bg="#1F1F1F")
         logo_label.pack(pady=0)
 
+         # By Sonya and Ethan
+        logo_label = tk.Label(root, text="By Sonya and Ethan", font=("Arial", 16, "normal"), fg="white", bg="#1F1F1F")
+        logo_label.pack(pady=0)
+        
         # Spacing
         spacer = tk.Label(root, bg="#1F1F1F")
-        spacer.pack(pady=20)
+        spacer.pack(pady=5)
+
+        # White line
+        canvas = tk.Canvas(root, height=2, bg="#1F1F1F", bd=0, highlightthickness=0)
+        canvas.pack(fill="x", pady=10)
+        canvas.create_line(0, 1, 10000, 1, fill="white")
+
+        # Spacing
+        spacer = tk.Label(root, bg="#1F1F1F")
+        spacer.pack(pady=2)
 
         # Red alert text
-        self.alert_label = tk.Label(root, text="", font=("Arial", 48, "bold"),
-                                    fg="#E74C3C", bg="#1F1F1F")
+        self.alert_label = tk.Label(root, text="Secure", font=("Arial", 48, "bold"),
+                                    fg="green", bg="#1F1F1F")
         self.alert_label.pack(pady=0)
 
         # Action buttons frame
@@ -105,8 +118,9 @@ class IoTDashboard:
         try:
             decrypted_message = self.decrypt_message(encrypted_message, private_key_pem)
             print("Decrypted ultrasonic message:", decrypted_message)
-            self.ultrasonic_label.config(text="Ultrasonic Ranger: " + decrypted_message)
-            self.handle_alert("Motion Detected")
+            self.ultrasonic_label.config(text=f"Ultrasonic Ranger: {decrypted_message} cm")
+            self.set_alert("Motion detected!")
+            self.alert_label.config(fg="red")
         except Exception as e:
             print("Error decrypting ultrasonic message:", e)
 
@@ -119,8 +133,9 @@ class IoTDashboard:
         try:
             decrypted_message = self.decrypt_message(encrypted_message, private_key_pem)
             print("Decrypted light message:", decrypted_message)
-            self.light_label.config(text="Light Sensor: " + decrypted_message)
-            self.handle_alert("Light Detected")
+            self.light_label.config(text=f"Light Sensor: {decrypted_message}")
+            self.set_alert("Light detected!")
+            self.alert_label.config(fg="red")
         except Exception as e:
             print("Error decrypting light message:", e)
 
@@ -142,12 +157,29 @@ class IoTDashboard:
 
     def approve_detection(self):
         self.client.publish("sonya_ethan/intruder_msg", "TURN_OFF_ALARMS")
-        self.alert_label.config(text="Detection Approved")
+        self.status_label.config(text="Detection Approved")
+        self.set_alert("Secure.")
+        self.alert_label.config(fg="green")
         self.disable_buttons()
 
     def reject_detection(self):
         self.client.publish("sonya_ethan/intruder_msg", "KEEP_ALARMS_ON")
-        self.alert_label.config(text="Detection Rejected")
+        self.status_label.config(text="Detection Rejected")
+        self.set_alert("Secure.")
+        self.alert_label.config(fg="green")
+        self.disable_buttons()
+    
+    def set_alert(self, alert_message):
+        self.alert_label.config(text=alert_message)
+        self.status_label.config(text="Status: Waiting for your input...")
+        self.alert_flag = True
+        self.enable_buttons()
+    
+    def reset_alert(self, status_message):
+        self.status_label.config(text=f"Status: {status_message}")
+        self.alert_label.config(text="Secure!")
+        self.alert_label.config(fg="green")
+        self.alert_flag = False
         self.disable_buttons()
 
 if __name__ == "__main__":
