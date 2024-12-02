@@ -31,10 +31,8 @@ with open("public_key.pem", "rb") as f:
     public_key_pem = f.read()
 
 def encrypt_message(message, public_key_pem):
-    # Load the public key using the correct method
     public_key = serialization.load_pem_public_key(public_key_pem, backend=default_backend())
     
-    # Encrypt the message using the public key
     encrypted_message = public_key.encrypt(
         message.encode(),
         padding.OAEP(

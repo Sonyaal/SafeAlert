@@ -96,7 +96,7 @@ class IoTDashboard:
         private_key = serialization.load_pem_private_key(private_key_pem, password=None)
         decrypted_message = private_key.decrypt(
             encrypted_message,
-            padding.OAEP(  # Ensure this is the correct OAEP from asymmetric.padding
+            padding.OAEP(
                 mgf=padding.MGF1(algorithm=hashes.SHA256()),
                 algorithm=hashes.SHA256(),
                 label=None
