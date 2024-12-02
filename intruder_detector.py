@@ -21,6 +21,9 @@ grovepi.pinMode(light_sensor_port, "INPUT")
 
 light_threshold = 250  
 distance_threshold = 100
+alert_flag = 0
+user_response = 0
+
 
 # RPI will only be recieving messages from the user on this topic
 def on_intruder_message(client, userdata, msg):
