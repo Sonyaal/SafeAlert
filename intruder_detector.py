@@ -103,13 +103,12 @@ if __name__ == '__main__':
                     print("Published light level:", light_level)
 
                 if (alert_flag):
-                    buzzer_val = 100
                     # Make buzzer noise increase while the user has not responded
                     while user_response == 0:
                         print("in while loop")
                         print("buzzer value: ", buzzer_val)
-                        # buzzer_val = 120
-                        # grovepi.analogWrite(buzzer_port, buzzer_val)
+                        buzzer_val = 120
+                        grovepi.analogWrite(buzzer_port, buzzer_val)
                         time.sleep(1)
                     if (user_response):
                         # setting flag back to 0
