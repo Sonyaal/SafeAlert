@@ -83,8 +83,8 @@ class IoTDashboard:
         self.client.on_message = self.on_message
         self.client.on_connect = self.on_connect
 
-        self.client.message_callback_add("sonya_ethan/ultrasonicRanger", self.on_ultrasonic_message)
-        self.client.message_callback_add("sonya_ethan/lightsensor", self.on_light_message)
+        self.client.message_callback_add("sonya_ethan/ultrasonic_ranger", self.on_ultrasonic_message)
+        self.client.message_callback_add("sonya_ethan/light_sensor", self.on_light_message)
 
         self.client.connect("broker.emqx.io", 1883, 60)
         self.client.username_pw_set(username="your_username", password="your_password")
@@ -106,8 +106,8 @@ class IoTDashboard:
 
     def on_connect(self, client, userdata, flags, rc):
         print("Connected to broker with result code", rc)
-        client.subscribe("sonya_ethan/ultrasonicRanger")
-        client.subscribe("sonya_ethan/lightsensor")
+        client.subscribe("sonya_ethan/ultrasonic_ranger")
+        client.subscribe("sonya_ethan/light_sensor")
 
     def on_ultrasonic_message(self, client, userdata, msg):
         encrypted_message = msg.payload

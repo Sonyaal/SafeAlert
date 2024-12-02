@@ -101,7 +101,7 @@ if __name__ == '__main__':
                     print("ALERT - motion has been detected")
                     alert()
                     encrypted_message = encrypt_message(str(distance), public_key_pem)
-                    client.publish("sonya_ethan/ultrasonicRanger", encrypted_message)
+                    client.publish("sonya_ethan/ultrasonic_ranger", encrypted_message)
                     print("Published encrypted distance:", encrypted_message)
 
                 elif light_level > light_threshold:
@@ -109,7 +109,7 @@ if __name__ == '__main__':
                     print("ALERT - light has been detected")
                     alert()
                     encrypted_message = encrypt_message(str(light_level), public_key_pem)
-                    client.publish("sonya_ethan/lightsensor", encrypted_message)
+                    client.publish("sonya_ethan/light_sensor", encrypted_message)
                     print("Published encrypted light level:", encrypted_message)
 
                 if (alert_flag):
