@@ -30,6 +30,7 @@ distance_threshold = 100
 with open("public_key.pem", "rb") as f:
     public_key_pem = f.read()
 
+# Encrypts the message using the user node's public key (ensuring they can be the only recipient of the alert)
 def encrypt_message(message, public_key_pem):
     public_key = serialization.load_pem_public_key(public_key_pem, backend=default_backend())
     
@@ -71,7 +72,7 @@ def disable_alarms():
     grovepi.analogWrite(buzzer_port, 0)  # Turn off buzzer
     grovepi.digitalWrite(led_port, 0)  # Turn off red led
 
-#Default message callback. Please use custom callbacks.
+# Default message callback.
 def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
 

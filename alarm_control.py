@@ -92,6 +92,7 @@ class IoTDashboard:
         # Start MQTT loop
         self.client.loop_start()
 
+    # Decrypts using the private key (ensures this is the only node that can interpert the alert)
     def decrypt_message(self, encrypted_message, private_key_pem):
         private_key = serialization.load_pem_private_key(private_key_pem, password=None)
         decrypted_message = private_key.decrypt(
@@ -139,7 +140,7 @@ class IoTDashboard:
         except Exception as e:
             print("Error decrypting light message:", e)
 
-    #Default message callback. Please use custom callbacks.
+    # Default message callback.
     def on_message(client, userdata, msg):
         print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
 
@@ -160,13 +161,15 @@ class IoTDashboard:
         self.status_label.config(text="Detection Approved")
         self.set_alert("Secure.")
         self.alert_label.config(fg="green")
+        self.status_label.config(text="Status: Listening for alerts...")
         self.disable_buttons()
 
     def reject_detection(self):
         self.client.publish("sonya_ethan/intruder_msg", "KEEP_ALARMS_ON")
         self.status_label.config(text="Detection Rejected")
-        self.set_alert("Secure.")
-        self.alert_label.config(fg="green")
+        self.set_alert("Dispatching 911.")
+        self.alert_label.config(fg="white")
+        self.status_label.config(text="Status: Contacting Emergency Services")
         self.disable_buttons()
     
     def set_alert(self, alert_message):
