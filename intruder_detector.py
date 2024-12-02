@@ -135,7 +135,6 @@ if __name__ == '__main__':
                     # This dectection is going to cause a change on the webpage that alerts the user and 
                     # prompts them to make a decision on if they should diffuse the alarm
                         # OOH we could make the user type in a password to turn on the alarm... thats like a digital signature right...? 
-
                 if (alert_flag):
                     buzzer_val = 100
                     # Make buzzer noise increase while the user has not responded
@@ -146,6 +145,7 @@ if __name__ == '__main__':
                     if (user_response):
                         # setting flag back to 0
                         user_response = 0 
+                time.sleep(10)
 
         except IOError:
             print("Error")
