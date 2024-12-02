@@ -68,7 +68,7 @@ if __name__ == '__main__':
     client.message_callback_add("sonya_ethan/intruder_msg", on_intruder_message)
 
     client.connect(host="broker.emqx.io", port=1883, keepalive=60)
-    self.client.username_pw_set(username="your_username", password="your_password")
+    client.username_pw_set(username="your_username", password="your_password")
     client.loop_start()
 
 
