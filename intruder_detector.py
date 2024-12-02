@@ -48,7 +48,7 @@ def on_message(client, userdata, msg):
     print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
 
 def alert():
-    grovepi.analogWrite(buzzer_port, 300) # Make a sound on the Buzzer
+    grovepi.analogWrite(buzzer_port, 120) # Make a sound on the Buzzer
     grovepi.digitalWrite(led_port, 1)  # Turn on the status LED to indicate the detection
 
 def disable_alarms():
@@ -108,8 +108,8 @@ if __name__ == '__main__':
                     while user_response == 0:
                         print("in while loop")
                         print("buzzer value: ", buzzer_val)
-                        buzzer_val = buzzer_val + 10
-                        grovepi.analogWrite(buzzer_port, buzzer_val)
+                        # buzzer_val = 120
+                        # grovepi.analogWrite(buzzer_port, buzzer_val)
                         time.sleep(1)
                     if (user_response):
                         # setting flag back to 0
