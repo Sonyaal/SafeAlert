@@ -21,12 +21,10 @@ grovepi.pinMode(light_sensor_port, "INPUT")
 
 light_threshold = 250  
 distance_threshold = 100
-alert_flag = 0
-user_response = 0
-
 
 # RPI will only be recieving messages from the user on this topic
 def on_intruder_message(client, userdata, msg):
+    global user_response  # Declare user_response as global
     message = msg.payload.decode("utf-8")
     user_response = 1
     if message == "TURN_OFF_ALARMS": # sent when user wants to disable alarms
@@ -54,6 +52,7 @@ def alert():
     grovepi.digitalWrite(led_port, 1)  # Turn on the status LED to indicate the detection
 
 def disable_alarms():
+    global user_response  # Declare user_response as global
     print("in disable_alarms")
     print("user response is", user_response)
     grovepi.analogWrite(buzzer_port, 0) # Turn off buzzer
