@@ -1,12 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-from paho.mqtt.client import Client
-import threading
-import random
+import paho.mqtt.client as mqtt
+
 
 class IoTDashboard:
 
-    # This is the UI code for the dashboard. Elements are defined top to bottom on the window.
     def __init__(self, root):
         self.root = root
         self.root.title("IoT Dashboard")
@@ -18,11 +16,11 @@ class IoTDashboard:
 
         spacer = tk.Label(root, bg="#1F1F1F")
         spacer.pack(pady=20)
-        
+
         # Logo
         logo_label = tk.Label(root, text="SafeAlert", font=("Arial", 150, "bold"), fg="white", bg="#1F1F1F")
         logo_label.pack(pady=0)
-        
+
         # By Sonya and Ethan
         logo_label = tk.Label(root, text="By Sonya and Ethan", font=("Arial", 16, "normal"), fg="white", bg="#1F1F1F")
         logo_label.pack(pady=0)
@@ -47,7 +45,7 @@ class IoTDashboard:
 
         # Spacing
         spacer = tk.Label(root, bg="#1F1F1F")
-        spacer.pack(pady=2) 
+        spacer.pack(pady=2)
 
         # Action buttons frame
         self.action_frame = tk.Frame(root, bg="#1F1F1F")
@@ -55,13 +53,13 @@ class IoTDashboard:
 
         # Approve/Deny buttons (side-by-side)
         self.yes_button = tk.Button(self.action_frame, text="Approve Detection",
-                                    command=self.approve_detection,
-                                    font=("Arial", 20, "bold"),
-                                    bg="#A9DFBF", fg="green", relief="raised", bd=2, padx=20, pady=10)
+                                     command=self.approve_detection,
+                                     font=("Arial", 20, "bold"),
+                                     bg="#A9DFBF", fg="green", relief="raised", bd=2, padx=20, pady=10)
         self.no_button = tk.Button(self.action_frame, text="Reject Detection",
-                                   command=self.reject_detection,
-                                   font=("Arial", 20, "bold"),
-                                   bg="#FADBD8", fg="red", relief="raised", bd=2, padx=20, pady=10)
+                                    command=self.reject_detection,
+                                    font=("Arial", 20, "bold"),
+                                    bg="#FADBD8", fg="red", relief="raised", bd=2, padx=20, pady=10)
         self.yes_button.grid(row=0, column=0, padx=20, pady=10)
         self.no_button.grid(row=0, column=1, padx=20, pady=10)
 
@@ -74,7 +72,7 @@ class IoTDashboard:
         labels_frame = tk.Frame(root, bg="#1F1F1F")
         labels_frame.pack(pady=10)
         self.ultrasonic_label = tk.Label(labels_frame, text="Ultrasonic Ranger: Not yet received",
-                                        font=("Arial", 14), bg="#1F1F1F", fg="#ECF0F1")
+                                         font=("Arial", 14), bg="#1F1F1F", fg="#ECF0F1")
         self.ultrasonic_label.grid(row=0, column=0, padx=20, pady=10)
 
         self.light_label = tk.Label(labels_frame, text="Light Sensor: Not yet received",
@@ -85,23 +83,22 @@ class IoTDashboard:
         self.disable_buttons()
 
         # Set up MQTT Client
-        self.client = Client()
+        self.client = mqtt.Client()
         self.client.on_message = self.on_message
         self.client.on_connect = self.on_connect
 
         self.client.message_callback_add("sonya_ethan/ultrasonicRanger", self.on_ultrasonic_message)
         self.client.message_callback_add("sonya_ethan/lightsensor", self.on_light_message)
 
-        self.client.connect("broker.hivemq.com", 1883, 60)
+        self.client.connect("broker.emqx.io", 1883, 60)
+        self.client.username_pw_set(username="your_username", password="your_password")
 
-        # Run MQTT in a separate thread
-        self.mqtt_thread = threading.Thread(target=self.start_mqtt_loop, daemon=True)
-        self.mqtt_thread.start()
+        # Start MQTT loop
+        self.client.loop_start()
 
-        
-
-    def start_mqtt_loop(self):
-        self.client.loop_forever()
+    def poll_mqtt(self):
+        self.client.loop(timeout=1.0)  # Process MQTT messages
+        self.root.after(100, self.poll_mqtt)  # Poll again after 100ms
 
     def on_connect(self, client, userdata, flags, rc):
         print("Connected to broker with result code", rc)
@@ -126,32 +123,35 @@ class IoTDashboard:
     def approve_detection(self):
         self.client.publish("sonya_ethan/intruder_msg", "TURN_OFF_ALARMS")
         self.reset_alert("Detection approved. Alarm turned off.")
+
     def reject_detection(self):
         self.client.publish("sonya_ethan/intruder_msg", "TURN_ON_ALARMS")
         self.reset_alert("Detection rejected. Alarm turned on.")
 
-
-    # UI state management stuff
+    # UI state management
     def set_alert(self, alert_message):
         self.alert_label.config(text=alert_message)
         self.status_label.config(text="Status: Waiting for your input...")
         self.alert_flag = True
         self.enable_buttons()
+
     def reset_alert(self, status_message):
         self.status_label.config(text=f"Status: {status_message}")
         self.alert_label.config(text="Secure!")
         self.alert_label.config(fg="green")
         self.alert_flag = False
         self.disable_buttons()
+
     def enable_buttons(self):
         self.yes_button.config(state="normal")
         self.no_button.config(state="normal")
+
     def disable_buttons(self):
         self.yes_button.config(state="disabled")
         self.no_button.config(state="disabled")
 
 
-# Just the main function. Yk the vibes down here. Chillin as always.
+# Main function
 if __name__ == "__main__":
     root = tk.Tk()
     dashboard = IoTDashboard(root)

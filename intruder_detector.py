@@ -51,6 +51,7 @@ def alert():
     grovepi.digitalWrite(led_port, 1)  # Turn on the status LED to indicate the detection
 
 def disable_alarms():
+    print("in disable_alarms")
     grovepi.analogWrite(buzzer_port, 0) # Turn off buzzer
     grovepi.digitalWrite(led_port, 0)  # Turn off red led
 
@@ -66,7 +67,8 @@ if __name__ == '__main__':
     # Set custom callback for the both outputs (buzzer and light)
     client.message_callback_add("sonya_ethan/intruder_msg", on_intruder_message)
 
-    client.connect(host="broker.hivemq.com", port=1883, keepalive=60)
+    client.connect(host="broker.emqx.io", port=1883, keepalive=60)
+    self.client.username_pw_set(username="your_username", password="your_password")
     client.loop_start()
 
 
@@ -101,6 +103,7 @@ if __name__ == '__main__':
                     buzzer_val = 100
                     # Make buzzer noise increase while the user has not responded
                     while user_response == 0:
+                        print("in while loop")
                         buzzer_val = buzzer_val + 10
                         grovepi.analogWrite(buzzer_port, buzzer_val)
                         time.sleep(1)
