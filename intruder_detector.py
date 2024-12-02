@@ -79,6 +79,11 @@ def on_message(client, userdata, msg):
 if __name__ == '__main__':
     alert_flag = 0
     user_response = 0
+    # Initialize both outputs to off
+    grovepi.analogWrite(buzzer_port, 0)  # Turn off buzzer
+    grovepi.digitalWrite(led_port, 0)  # Turn off red led
+
+    # Set up MQTT protocol
     client = mqtt.Client()
     client.on_message = on_message
     client.on_connect = on_connect
