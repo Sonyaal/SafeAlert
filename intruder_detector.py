@@ -114,8 +114,6 @@ if __name__ == '__main__':
                     client.publish("sonya_ethan/lightsensor", encrypted_message)
                     print("Published encrypted light level:", encrypted_message)
 
-                    print("heyyy")
-
                 if (alert_flag):
                     buzzer_val = 120
                     while user_response == 0:

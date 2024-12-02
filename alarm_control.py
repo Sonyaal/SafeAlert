@@ -141,10 +141,12 @@ class IoTDashboard:
         self.no_button.config(state="disabled")
 
     def approve_detection(self):
+        self.client.publish("sonya_ethan/intruder_msg", "TURN_OFF_ALARMS")
         self.alert_label.config(text="Detection Approved")
         self.disable_buttons()
 
     def reject_detection(self):
+        self.client.publish("sonya_ethan/intruder_msg", "KEEP_ALARMS_ON")
         self.alert_label.config(text="Detection Rejected")
         self.disable_buttons()
 
