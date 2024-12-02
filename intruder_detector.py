@@ -110,9 +110,9 @@ if __name__ == '__main__':
             while True:
                 # Read the ultrasonic ranger value
                 distance = grovepi.ultrasonicRead(ultrasonic_ranger_port)  
-                print(f"Distance: {distance}")  
+                print("Distance: ", distance)  
                 # light_level = grovepi.analogRead(light_sensor_port)
-                # print(f"Light level: {light_level}")      
+                # print("Light level: ", light_level)      
                 # Eventually include a check for sound being detected (we need two sensors)
 
                 if distance > distance_threshold:  # If a person walks through the door
