@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-# from paho.mqtt.client import Client
+from paho.mqtt.client import Client
 import threading
 import random
 
@@ -84,49 +84,50 @@ class IoTDashboard:
         # Disable buttons
         self.disable_buttons()
 
-        # # Set up MQTT Client
-        # self.client = Client()
-        # self.client.on_message = self.on_message
-        # self.client.on_connect = self.on_connect
+        # Set up MQTT Client
+        self.client = Client()
+        self.client.on_message = self.on_message
+        self.client.on_connect = self.on_connect
 
-        # self.client.message_callback_add("sonya_ethan/ultrasonicRanger", self.on_ultrasonic_message)
-        # self.client.message_callback_add("sonya_ethan/lightsensor", self.on_light_message)
+        self.client.message_callback_add("sonya_ethan/ultrasonicRanger", self.on_ultrasonic_message)
+        self.client.message_callback_add("sonya_ethan/lightsensor", self.on_light_message)
 
-        # self.client.connect("broker.hivemq.com", 1883, 60)
+        self.client.connect("broker.hivemq.com", 1883, 60)
 
-        # # Run MQTT in a separate thread
-        # self.mqtt_thread = threading.Thread(target=self.start_mqtt_loop, daemon=True)
-        # self.mqtt_thread.start()
+        # Run MQTT in a separate thread
+        self.mqtt_thread = threading.Thread(target=self.start_mqtt_loop, daemon=True)
+        self.mqtt_thread.start()
 
-        # Simulated data
-        self.start_test_data_simulation()
+        
 
-    # def start_mqtt_loop(self):
-    #     self.client.loop_forever()
+    def start_mqtt_loop(self):
+        self.client.loop_forever()
 
-    # def on_connect(self, client, userdata, flags, rc):
-    #     print("Connected to broker with result code", rc)
-    #     client.subscribe("sonya_ethan/ultrasonicRanger")
-    #     client.subscribe("sonya_ethan/lightsensor")
+    def on_connect(self, client, userdata, flags, rc):
+        print("Connected to broker with result code", rc)
+        client.subscribe("sonya_ethan/ultrasonicRanger")
+        client.subscribe("sonya_ethan/lightsensor")
 
-    # def on_ultrasonic_message(self, client, userdata, msg):
-    #     message = msg.payload.decode("utf-8")
-    #     self.ultrasonic_label.config(text=f"Ultrasonic Ranger: {message} cm")
-    #     self.set_alert("Motion detected! Distance: " + message)
+    def on_ultrasonic_message(self, client, userdata, msg):
+        message = msg.payload.decode("utf-8")
+        self.ultrasonic_label.config(text=f"Ultrasonic Ranger: {message} cm")
+        self.set_alert("Motion detected!")
+        self.alert_label.config(fg="red")
 
-    # def on_light_message(self, client, userdata, msg):
-    #     message = msg.payload.decode("utf-8")
-    #     self.light_label.config(text=f"Light Sensor: {message}")
-    #     self.set_alert("Light detected!")
+    def on_light_message(self, client, userdata, msg):
+        message = msg.payload.decode("utf-8")
+        self.light_label.config(text=f"Light Sensor: {message}")
+        self.set_alert("Light detected!")
+        self.alert_label.config(fg="red")
 
-    # def on_message(self, client, userdata, msg):
-    #     print(f"Received {msg.payload.decode('utf-8')} from {msg.topic}")
+    def on_message(self, client, userdata, msg):
+        print(f"Received {msg.payload.decode('utf-8')} from {msg.topic}")
 
     def approve_detection(self):
-        # self.client.publish("sonya_ethan/intruder_msg", "TURN_OFF_ALARMS")
+        self.client.publish("sonya_ethan/intruder_msg", "TURN_OFF_ALARMS")
         self.reset_alert("Detection approved. Alarm turned off.")
     def reject_detection(self):
-        # self.client.publish("sonya_ethan/intruder_msg", "TURN_ON_ALARMS")
+        self.client.publish("sonya_ethan/intruder_msg", "TURN_ON_ALARMS")
         self.reset_alert("Detection rejected. Alarm turned on.")
 
 
@@ -148,28 +149,6 @@ class IoTDashboard:
     def disable_buttons(self):
         self.yes_button.config(state="disabled")
         self.no_button.config(state="disabled")
-
-
-    # Sending random values rn in these three functions. Will eventually delete
-
-    def start_test_data_simulation(self):
-        """Continuously simulate test data for the dashboard."""
-        self.simulate_ultrasonic_message()
-        self.simulate_light_message()
-    def simulate_ultrasonic_message(self):
-        """Simulates an ultrasonic sensor message at regular intervals."""
-        distance = random.randint(50, 200)
-        self.ultrasonic_label.config(text=f"Ultrasonic Ranger: {distance} cm")
-        self.set_alert(f"Motion detected!")
-        self.alert_label.config(fg="red")
-        self.root.after(3000, self.simulate_ultrasonic_message)
-    def simulate_light_message(self):
-        """Simulates a light sensor message at regular intervals."""
-        light_level = random.choice(["Bright", "Dim", "Dark"])
-        self.light_label.config(text=f"Light Sensor: {light_level}")
-        self.set_alert("Light detected!")
-        self.alert_label.config(fg="red")
-        self.root.after(5000, self.simulate_light_message)
 
 
 # Just the main function. Yk the vibes down here. Chillin as always.
