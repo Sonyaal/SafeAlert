@@ -49,6 +49,8 @@ if __name__ == '__main__':
     client.loop_start()
 
     while True:
+        # mkay so like this interactive part doesnt work but you get the idea....
+        # i think we would need threading to get keyboard input like we have in vm_publisher.py
         if (alert_flag):
             user_input = input("Do you approve this detection? (y/n)")
             if user_input == "y":

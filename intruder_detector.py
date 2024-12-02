@@ -145,7 +145,7 @@ if __name__ == '__main__':
                     if (user_response):
                         # setting flag back to 0
                         user_response = 0 
-                time.sleep(10)
+                time.sleep(5)
 
         except IOError:
             print("Error")
