@@ -55,6 +55,7 @@ def alert():
 
 def disable_alarms():
     print("in disable_alarms")
+    print("user response is", user_response)
     grovepi.analogWrite(buzzer_port, 0) # Turn off buzzer
     grovepi.digitalWrite(led_port, 0)  # Turn off red led
 
