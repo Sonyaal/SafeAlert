@@ -2,6 +2,7 @@
 
 import grovepi
 import time
+import paho.mqtt.client as mqtt
 
 led_port = 3 # D3
 buzzer_port = 4 # D4
