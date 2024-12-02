@@ -146,5 +146,5 @@ if __name__ == '__main__':
                         # setting flag back to 0
                         user_response = 0 
 
-    except IOError:
-        print("Error")
+        except IOError:
+            print("Error")
