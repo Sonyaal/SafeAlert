@@ -19,7 +19,7 @@ grovepi.pinMode(ultrasonic_ranger_port, "INPUT")
 # Initialize the light sensor as input
 grovepi.pinMode(light_sensor_port, "INPUT")
 
-light_threshold = 250  
+light_threshold = 50  
 distance_threshold = 100
 
 # RPI will only be recieving messages from the user on this topic
