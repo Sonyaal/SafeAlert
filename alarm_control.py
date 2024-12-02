@@ -1,7 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
 import paho.mqtt.client as mqtt
-
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.primitives import hashes
 
 class IoTDashboard:
 
@@ -14,38 +17,18 @@ class IoTDashboard:
         # Background
         self.root.configure(bg="#1F1F1F")
 
-        spacer = tk.Label(root, bg="#1F1F1F")
-        spacer.pack(pady=20)
-
         # Logo
         logo_label = tk.Label(root, text="SafeAlert", font=("Arial", 150, "bold"), fg="white", bg="#1F1F1F")
         logo_label.pack(pady=0)
 
-        # By Sonya and Ethan
-        logo_label = tk.Label(root, text="By Sonya and Ethan", font=("Arial", 16, "normal"), fg="white", bg="#1F1F1F")
-        logo_label.pack(pady=0)
-
         # Spacing
         spacer = tk.Label(root, bg="#1F1F1F")
-        spacer.pack(pady=5)
-
-        # White line
-        canvas = tk.Canvas(root, height=2, bg="#1F1F1F", bd=0, highlightthickness=0)
-        canvas.pack(fill="x", pady=10)
-        canvas.create_line(0, 1, 10000, 1, fill="white")
-
-        # Spacing
-        spacer = tk.Label(root, bg="#1F1F1F")
-        spacer.pack(pady=2)
+        spacer.pack(pady=20)
 
         # Red alert text
         self.alert_label = tk.Label(root, text="", font=("Arial", 48, "bold"),
                                     fg="#E74C3C", bg="#1F1F1F")
         self.alert_label.pack(pady=0)
-
-        # Spacing
-        spacer = tk.Label(root, bg="#1F1F1F")
-        spacer.pack(pady=2)
 
         # Action buttons frame
         self.action_frame = tk.Frame(root, bg="#1F1F1F")
@@ -96,6 +79,18 @@ class IoTDashboard:
         # Start MQTT loop
         self.client.loop_start()
 
+    def decrypt_message(self, encrypted_message, private_key_pem):
+        private_key = serialization.load_pem_private_key(private_key_pem, password=None)
+        decrypted_message = private_key.decrypt(
+            encrypted_message,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
+        )
+        return decrypted_message.decode()
+
     def poll_mqtt(self):
         self.client.loop(timeout=1.0)  # Process MQTT messages
         self.root.after(100, self.poll_mqtt)  # Poll again after 100ms
@@ -106,41 +101,36 @@ class IoTDashboard:
         client.subscribe("sonya_ethan/lightsensor")
 
     def on_ultrasonic_message(self, client, userdata, msg):
-        message = msg.payload.decode("utf-8")
-        self.ultrasonic_label.config(text=f"Ultrasonic Ranger: {message} cm")
-        self.set_alert("Motion detected!")
-        self.alert_label.config(fg="red")
+        encrypted_message = msg.payload
+        private_key_path = "private_key.pem"
+        with open(private_key_path, "rb") as f:
+            private_key_pem = f.read()
+
+        try:
+            decrypted_message = self.decrypt_message(encrypted_message, private_key_pem)
+            print("Decrypted ultrasonic message:", decrypted_message)
+            self.ultrasonic_label.config(text="Ultrasonic Ranger: " + decrypted_message)
+            self.handle_alert("Motion Detected")
+        except Exception as e:
+            print("Error decrypting ultrasonic message:", e)
 
     def on_light_message(self, client, userdata, msg):
-        message = msg.payload.decode("utf-8")
-        self.light_label.config(text=f"Light Sensor: {message}")
-        self.set_alert("Light detected!")
-        self.alert_label.config(fg="red")
+        encrypted_message = msg.payload
+        private_key_path = "private_key.pem"
+        with open(private_key_path, "rb") as f:
+            private_key_pem = f.read()
 
-    def on_message(self, client, userdata, msg):
-        print(f"Received {msg.payload.decode('utf-8')} from {msg.topic}")
+        try:
+            decrypted_message = self.decrypt_message(encrypted_message, private_key_pem)
+            print("Decrypted light message:", decrypted_message)
+            self.light_label.config(text="Light Sensor: " + decrypted_message)
+            self.handle_alert("Light Detected")
+        except Exception as e:
+            print("Error decrypting light message:", e)
 
-    def approve_detection(self):
-        self.client.publish("sonya_ethan/intruder_msg", "TURN_OFF_ALARMS")
-        self.reset_alert("Detection approved. Alarm turned off.")
-
-    def reject_detection(self):
-        self.client.publish("sonya_ethan/intruder_msg", "KEEP_ALARMS_ON")
-        self.reset_alert("Detection rejected. Alarm turned on.")
-
-    # UI state management
-    def set_alert(self, alert_message):
-        self.alert_label.config(text=alert_message)
-        self.status_label.config(text="Status: Waiting for your input...")
-        self.alert_flag = True
+    def handle_alert(self, alert_text):
+        self.alert_label.config(text=alert_text)
         self.enable_buttons()
-
-    def reset_alert(self, status_message):
-        self.status_label.config(text=f"Status: {status_message}")
-        self.alert_label.config(text="Secure!")
-        self.alert_label.config(fg="green")
-        self.alert_flag = False
-        self.disable_buttons()
 
     def enable_buttons(self):
         self.yes_button.config(state="normal")
@@ -150,9 +140,16 @@ class IoTDashboard:
         self.yes_button.config(state="disabled")
         self.no_button.config(state="disabled")
 
+    def approve_detection(self):
+        self.alert_label.config(text="Detection Approved")
+        self.disable_buttons()
 
-# Main function
+    def reject_detection(self):
+        self.alert_label.config(text="Detection Rejected")
+        self.disable_buttons()
+
 if __name__ == "__main__":
     root = tk.Tk()
     dashboard = IoTDashboard(root)
+    dashboard.poll_mqtt()
     root.mainloop()
