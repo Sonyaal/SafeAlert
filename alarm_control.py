@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 import paho.mqtt.client as mqtt
+from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives import hashes
 
 class IoTDashboard:
@@ -83,17 +83,13 @@ class IoTDashboard:
         private_key = serialization.load_pem_private_key(private_key_pem, password=None)
         decrypted_message = private_key.decrypt(
             encrypted_message,
-            padding.OAEP(
+            padding.OAEP(  # Ensure this is the correct OAEP from asymmetric.padding
                 mgf=padding.MGF1(algorithm=hashes.SHA256()),
                 algorithm=hashes.SHA256(),
                 label=None
             )
         )
         return decrypted_message.decode()
-
-    def poll_mqtt(self):
-        self.client.loop(timeout=1.0)  # Process MQTT messages
-        self.root.after(100, self.poll_mqtt)  # Poll again after 100ms
 
     def on_connect(self, client, userdata, flags, rc):
         print("Connected to broker with result code", rc)
@@ -128,6 +124,10 @@ class IoTDashboard:
         except Exception as e:
             print("Error decrypting light message:", e)
 
+    #Default message callback. Please use custom callbacks.
+    def on_message(client, userdata, msg):
+        print("on_message: " + msg.topic + " " + str(msg.payload, "utf-8"))
+
     def handle_alert(self, alert_text):
         self.alert_label.config(text=alert_text)
         self.enable_buttons()
@@ -151,5 +151,4 @@ class IoTDashboard:
 if __name__ == "__main__":
     root = tk.Tk()
     dashboard = IoTDashboard(root)
-    dashboard.poll_mqtt()
     root.mainloop()
