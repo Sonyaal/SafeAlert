@@ -116,7 +116,7 @@ if __name__ == '__main__':
                 # print("Light level: ", light_level)      
                 # Eventually include a check for sound being detected (we need two sensors)
 
-                if distance > distance_threshold:  # If a person walks through the door
+                if distance < distance_threshold:  # If a person walks through the door
                     print("ALERT - motion has been detected")
                     alert()
                     # Publish the distance to the ultrasonicRanger topic
