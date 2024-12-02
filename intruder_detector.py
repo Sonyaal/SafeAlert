@@ -103,6 +103,7 @@ if __name__ == '__main__':
                     print("Published light level:", light_level)
 
                 if (alert_flag):
+                    buzzer_val = 120
                     # Make buzzer noise increase while the user has not responded
                     while user_response == 0:
                         print("in while loop")
