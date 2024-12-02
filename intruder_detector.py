@@ -108,7 +108,7 @@ if __name__ == '__main__':
                     while user_response == 0:
                         print("in while loop")
                         print("buzzer value: ", buzzer_val)
-                        buzzer_val = 120
+                        buzzer_val = buzzer_val + 10
                         grovepi.analogWrite(buzzer_port, buzzer_val)
                         time.sleep(1)
                     if (user_response):
