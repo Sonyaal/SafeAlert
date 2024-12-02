@@ -6,7 +6,7 @@ import time
 led_port = 3 # D3
 buzzer_port = 4 # D4
 ultrasonic_ranger_port = 2 # D2
-light_sensor_port = 0  # A0
+# light_sensor_port = 0  # A0
 
 # Initialize the LED as an output
 grovepi.pinMode(led_port, "OUTPUT")
@@ -16,7 +16,7 @@ grovepi.pinMode(buzzer_port, "OUTPUT")
 # Initialize the ultrasonic ranger as input
 grovepi.pinMode(ultrasonic_ranger_port, "INPUT")
 # Initialize the light sensor as input
-grovepi.pinMode(light_sensor_port, "INPUT")
+# grovepi.pinMode(light_sensor_port, "INPUT")
 
 light_threshold = 250  
 distance_threshold = 100
@@ -111,8 +111,8 @@ if __name__ == '__main__':
                 # Read the ultrasonic ranger value
                 distance = grovepi.ultrasonicRead(ultrasonic_ranger_port)  
                 print(f"Distance: {distance}")  
-                light_level = grovepi.analogRead(light_sensor_port)
-                print(f"Light level: {light_level}")      
+                # light_level = grovepi.analogRead(light_sensor_port)
+                # print(f"Light level: {light_level}")      
                 # Eventually include a check for sound being detected (we need two sensors)
 
                 if distance > distance_threshold:  # If a person walks through the door
@@ -124,12 +124,12 @@ if __name__ == '__main__':
                     # This dectection is going to cause a change on the webpage that alerts the user and 
                     # prompts them to make a decision on if they should diffuse the alarm
                         # OOH we could make the user type in a password to turn on the alarm... thats like a digital signature right...? 
-                elif light_level > light_threshold:
-                    print("ALERT - light has been detected")
-                    alert()
-                    # Publish the light level to the lightsensor topic
-                    client.publish("sonya_ethan/lightsensor", str(light_level)) # signals light has been detected
-                    print("Published light level:", light_level)
+                # elif light_level > light_threshold:
+                #     print("ALERT - light has been detected")
+                #     alert()
+                #     # Publish the light level to the lightsensor topic
+                #     client.publish("sonya_ethan/lightsensor", str(light_level)) # signals light has been detected
+                #     print("Published light level:", light_level)
 
                     # This dectection is going to cause a change on the webpage that alerts the user and 
                     # prompts them to make a decision on if they should diffuse the alarm
