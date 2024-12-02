@@ -114,13 +114,15 @@ if __name__ == '__main__':
                     client.publish("sonya_ethan/lightsensor", encrypted_message)
                     print("Published encrypted light level:", encrypted_message)
 
-                if alert_flag:
+                    print("heyyy")
+
+                if (alert_flag):
                     buzzer_val = 120
                     while user_response == 0:
                         buzzer_val = buzzer_val + 10
                         grovepi.analogWrite(buzzer_port, buzzer_val)
                         time.sleep(1)
-                    if user_response:
+                    if (user_response):
                         user_response = 0
                     alert_flag = 0
                 time.sleep(1)
